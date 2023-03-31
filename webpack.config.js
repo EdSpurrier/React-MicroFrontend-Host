@@ -8,12 +8,12 @@ const path = require('path');
 
 const localRemotes = {
   host          : 'host@http://localhost:3000/remoteEntry.js',
-  nav           : 'nav@http://localhost:4200/moduleEntry.js',
+  /* nav           : 'nav@http://localhost:4200/moduleEntry.js', */
 }
 
 const devRemotes = {
   host          : 'host@https://edspurrier.com/remoteEntry.js',
-  nav           : 'nav@https://nav.edspurrier.com/moduleEntry.js',
+  /* nav           : 'nav@https://nav.edspurrier.com/moduleEntry.js', */
 }
 
 
@@ -47,6 +47,21 @@ module.exports = {
         ],
       },
       {
+        test: /\.(less)$/,
+        use: [{
+            loader: 'style-loader' // creates style nodes from JS strings
+        }, {
+            loader: 'css-loader' // translates CSS into CommonJS
+        }, {
+            loader: 'less-loader', // compiles Less to CSS
+            options: {
+              lessOptions: {
+                  javascriptEnabled: true,
+              }
+          }
+        }]
+      },
+      {
         test: /\.css$/i,
         use: ["style-loader", "css-loader"],
       },
@@ -72,7 +87,7 @@ module.exports = {
     new ModuleFederationPlugin({
         name: "host",
         filename: "remoteEntry.js",
-        remotes: localRemotes,
+        remotes: devRemotes,
         exposes: {
           "./hostStore" : './src/state/hostStore',
           "./userStore" : './src/state/userStore',
@@ -97,8 +112,8 @@ module.exports = {
     }),
     new Dotenv()
   ],
-  resolve: {
-    extensions: [".js", ".jsx"],
-  },
+  resolve: { extensions: ['.tsx', '.ts', '.js'], 
+    modules: ['node_modules', path.join(__dirname, 'src')], 
+  }, 
   target: "web",
 };
